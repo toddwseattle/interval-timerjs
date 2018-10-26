@@ -18,6 +18,14 @@ const CircleAnimationDefault = {
 const PI = 3.1415927;
 
 class TimeCircle extends Component {
+  static propTypes = {
+    seconds: PropTypes.number,
+    circleSize: PropTypes.number,
+    play: PropTypes.bool,
+    reset: PropTypes.bool,
+    resetCallback: PropTypes.func
+  };
+
   constructor(props) {
     super(props);
     const circleSize = props.circleSize ? props.circleSize : 160;
@@ -27,54 +35,59 @@ class TimeCircle extends Component {
       ...CircleAnimationDefault,
       strokeDasharray: circumference
     };
-    console.log((1 * circleSize * 0.75).toString() + "px");
     this.circleText = {
       ...TimeCircleText,
       lineHeight: (1 * circleSize * 0.75).toString() + "px"
     };
     this.state = {
-      totalCount: totalCount,
-      remainCount: totalCount,
       circleSize: circleSize,
       radius: 1 * ((circleSize / 2) * 0.875),
-      circumferance: circumference,
-      sliceSize: 1 * (circumference / (totalCount - 1))
+      circumference: circumference,
+      sliceSize: 1 * (circumference / (totalCount - 1)),
+      mounted: false,
+      totalCount: totalCount,
+      remainCount: totalCount
     };
-    console.log(this.state);
-  }
-  startinterval(space = 1000) {
-    if (this.mounted) {
-      this.interval = setInterval(this.tick.bind(this), space);
-    }
-  }
-  componentDidMount() {
-    this.mounted = true;
     this.startinterval();
   }
-  componsnetWillUnMount() {
+  startinterval(space = 1000) {
+    this.interval = setInterval(this.tick.bind(this), space);
+  }
+  componentDidMount() {
+    this.setState({ ...this.state, mounted: true });
+  }
+  componentWillUnMount() {
     if (this.interval) clearInterval(this.interval);
   }
   tick() {
-    if (this.mounted) {
-      console.log(this.state);
-      if (this.state.remainCount > 0) {
-        this.setState({
-          ...this.state,
-          remainCount: this.state.remainCount - 1
-        });
-      } else {
-        clearInterval(this.interval);
-      }
+    if (!this.state.mounted) return;
+    if (this.props.reset) {
+      this.resetTimer();
+    } else if (this.state.remainCount > 0 && this.props.play) {
+      this.setState({
+        ...this.state,
+        remainCount: this.state.remainCount - 1
+      });
     }
   }
 
+  resetTimer() {
+    const totalCount = this.props.seconds ? this.props.seconds : 10;
+    this.setState({
+      ...this.state,
+      totalCount: totalCount,
+      remainCount: totalCount,
+      resetTimer: false,
+      sliceSize: 1 * (this.state.circumference / (totalCount - 1))
+    });
+    this.props.resetCallback();
+  }
   render() {
     let circleA = { ...this.circleAnimation };
     circleA.strokeDashoffset =
       this.state.remainCount > 0
         ? this.state.sliceSize * (this.state.remainCount - 1)
         : 0;
-    console.log(circleA.strokeDashoffset);
     return (
       <div style={TimeCircleDiv}>
         <h2 style={this.circleText}>{this.state.remainCount}</h2>
@@ -99,10 +112,5 @@ class TimeCircle extends Component {
     );
   }
 }
-
-TimeCircle.propTypes = {
-  seconds: PropTypes.number,
-  circleSize: PropTypes.number
-};
 
 export default TimeCircle;
