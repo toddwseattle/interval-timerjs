@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 import TimeFormat from "./TimeFormat";
+import Alarm from "./Alarm";
 // default styles
 const TimeCircleDiv = { position: "relative", float: "left" };
 const TimeCircleText = {
@@ -24,7 +25,8 @@ class TimeCircle extends Component {
     circleSize: PropTypes.number,
     play: PropTypes.bool,
     reset: PropTypes.bool,
-    resetCallback: PropTypes.func
+    resetCallback: PropTypes.func,
+    timerDone: PropTypes.func
   };
 
   constructor(props) {
@@ -69,6 +71,8 @@ class TimeCircle extends Component {
         ...this.state,
         remainCount: this.state.remainCount - 1
       });
+    } else if (this.state.remainCount === 0 && this.props.play) {
+      this.props.timerDone();
     }
   }
 
@@ -111,6 +115,7 @@ class TimeCircle extends Component {
             stroke="black"
           />
         </svg>
+        <Alarm play={this.state.remainCount === 0 && this.props.play} />
       </div>
     );
   }

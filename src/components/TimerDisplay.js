@@ -1,12 +1,13 @@
 // Timer Stateless Functional Components
 import React from "react";
-import TimeCircle from "./timecircle";
+import TimeCircle from "./TimeCircle";
 export const TimeDisplay = ({
   toDisplay,
   duration = 60,
   play = true,
   reset = false,
-  resetCallback
+  resetCallback,
+  timerDone
 }) => {
   return (
     <div>
@@ -16,6 +17,7 @@ export const TimeDisplay = ({
         play={play}
         reset={reset}
         resetCallback={resetCallback}
+        timerDone={timerDone}
       />
     </div>
   );

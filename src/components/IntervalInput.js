@@ -1,7 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 
-function Intervalinput({ intervals, valueChange }) {
+function IntervalInput({ intervals, valueChange }) {
   let options = [];
   for (let i = 1; i < 11; i++) {
     options.push(
@@ -33,9 +33,9 @@ function Intervalinput({ intervals, valueChange }) {
   );
 }
 
-Intervalinput.propTypes = {
+IntervalInput.propTypes = {
   intervals: PropTypes.number,
   valueChange: PropTypes.func
 };
 
-export default Intervalinput;
+export default IntervalInput;

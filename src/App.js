@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import "./App.css";
 import TimerDisplay from "./components/TimerDisplay";
-import Commands from "./containers/commands";
+import Commands from "./containers/Commands";
 import PlayPause from "./components/PlayPause";
 
 class App extends Component {
@@ -9,19 +9,26 @@ class App extends Component {
     super(props);
     this.intervalChange = this.intervalChange.bind(this);
     this.resetComplete = this.resetComplete.bind(this);
+    this.intervalDone = this.intervalDone.bind(this);
     this.ppClick = this.ppClick.bind(this);
     this.state = {
       intervals: 1,
       duration: 60,
+      tbreak: 0,
       reset: false,
       play: false
     };
   }
-  intervalChange(intervals = 1, duration = 60) {
+  intervalDone() {
+    this.setState({ ...this.state, play: false });
+  }
+
+  intervalChange({ intervals = 1, timespan = 60, tbreak = 0 }) {
     this.setState({
       ...this.state,
       intervals: intervals,
-      duration: duration,
+      duration: timespan,
+      tbreak: tbreak,
       play: false,
       reset: true
     });
@@ -43,6 +50,7 @@ class App extends Component {
           play={this.state.play}
           reset={this.state.reset}
           resetCallback={this.resetComplete}
+          timerDone={this.intervalDone}
         />
       </div>
     );
