@@ -3,6 +3,7 @@ import "./App.css";
 import TimerDisplay from "./components/TimerDisplay";
 import Commands from "./containers/Commands";
 import PlayPause from "./components/PlayPause";
+import IntervalDisplay from "./components/IntervalDisplay";
 
 class App extends Component {
   constructor(props) {
@@ -13,24 +14,39 @@ class App extends Component {
     this.ppClick = this.ppClick.bind(this);
     this.state = {
       intervals: 1,
+      intervalsRemaining: 1,
       duration: 60,
       tbreak: 0,
       reset: false,
-      play: false
+      play: false,
+      intervalDone: false,
+      cycleDone: false
     };
   }
   intervalDone() {
-    this.setState({ ...this.state, play: false });
+    const remain = this.state.intervalsRemaining - 1;
+    const done = remain <= 0;
+    const newDuration = done ? 0 : this.state.duration;
+    this.setState({
+      ...this.state,
+      intervalsRemaining: remain,
+      duration: newDuration,
+      cycleDone: done,
+      reset: true,
+      play: this.state.play && !done,
+      intervalDone: true
+    });
   }
 
   intervalChange({ intervals = 1, timespan = 60, tbreak = 0 }) {
     this.setState({
       ...this.state,
       intervals: intervals,
+      intervalsRemaining: intervals,
       duration: timespan,
       tbreak: tbreak,
-      play: false,
-      reset: true
+      reset: true,
+      play: false
     });
   }
   resetComplete() {
@@ -44,8 +60,14 @@ class App extends Component {
       <div className="App">
         <Commands onchange={this.intervalChange} />
         <PlayPause onchange={this.ppClick} play={this.state.play} />
+        <IntervalDisplay remain={this.state.intervalsRemaining} />
         <TimerDisplay
-          toDisplay="Interval"
+          toDisplay={
+            this.state.cycleDone
+              ? "Time's Up!"
+              : "Interval #" +
+                (this.state.intervals - this.state.intervalsRemaining + 1)
+          }
           duration={this.state.duration}
           play={this.state.play}
           reset={this.state.reset}
