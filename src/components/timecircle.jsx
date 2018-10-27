@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
+import TimeFormat from "./TimeFormat";
 // default styles
 const TimeCircleDiv = { position: "relative", float: "left" };
 const TimeCircleText = {
@@ -90,7 +91,9 @@ class TimeCircle extends Component {
         : 0;
     return (
       <div style={TimeCircleDiv}>
-        <h2 style={this.circleText}>{this.state.remainCount}</h2>
+        <h2 style={this.circleText}>
+          <TimeFormat seconds={this.state.remainCount} />
+        </h2>
         <svg
           width={this.state.circleSize}
           height={this.state.circleSize}
