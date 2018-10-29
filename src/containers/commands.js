@@ -6,54 +6,55 @@ import BreakTimeInput from "../components/BreakTimeInput";
 
 export class Commands extends Component {
   static propTypes = {
-    show: PropTypes.bool
+    show: PropTypes.bool,
+    onchange: PropTypes.func
   };
   static defaultProps = {
     show: true
   };
-  constructor(props) {
-    super(props);
-    this.state = { intervals: 2, timespan: 60, tbreak: 0 };
-    this.setInterval = this.setInterval.bind(this);
-    this.setTimeSpan = this.setTimeSpan.bind(this);
-    this.setBreak = this.setBreak.bind(this);
-  }
-  setInterval(e) {
+  state = { intervals: 2, timespan: 60, breakspan: 0 };
+  setIntervalHandler = e => {
     const ivals = parseInt(e.target.value);
-    this.setState({ ...this.state, intervals: ivals });
+    this.setState({ intervals: ivals });
     if (this.props.onchange) {
       this.props.onchange({ ...this.state, intervals: ivals });
     }
-  }
-  setBreak(e) {
+  };
+  setBreakHandler = e => {
     const tbr = parseInt(e.target.value, 10);
-    this.setState({ ...this.state, tbreak: tbr });
+    this.setState({ breakspan: tbr });
     if (this.props.onchange) {
-      this.props.onchange({ ...this.state, tbreak: tbr });
+      this.props.onchange({ ...this.state, breakspan: tbr });
     }
-  }
-  setTimeSpan(e) {
+  };
+  setTimeSpanHandler = e => {
     const tspan = parseInt(e.target.value, 10);
-    this.setState({ ...this.state, timespan: tspan });
+    this.setState({ timespan: tspan });
     if (this.props.onchange) {
       this.props.onchange({ ...this.state, timespan: tspan });
     }
-  }
-  render() {
+  };
+  render = () => {
     let comDisp = this.props.show ? (
       <div>
         <IntervalInput
-          valueChange={this.setInterval}
+          valueChange={this.setIntervalHandler.bind(this)}
           intervals={this.state.intervals}
         />
-        <TimeSpan onselect={this.setTimeSpan} timespan={this.state.timespan} />
-        <BreakTimeInput onselect={this.setBreak} bTime={this.state.tbreak} />
+        <TimeSpan
+          onselect={this.setTimeSpanHandler.bind(this)}
+          timespan={this.state.timespan}
+        />
+        <BreakTimeInput
+          onselect={this.setBreakHandler.bind(this)}
+          bTime={this.state.breakspan}
+        />
       </div>
     ) : (
       <div />
     );
     return comDisp;
-  }
+  };
 }
 
 export default Commands;

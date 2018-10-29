@@ -21,7 +21,7 @@ const PI = 3.1415927;
 
 class TimeCircle extends Component {
   static propTypes = {
-    seconds: PropTypes.number,
+    seconds: PropTypes.number.isRequired,
     circleSize: PropTypes.number,
     play: PropTypes.bool,
     reset: PropTypes.bool,
@@ -32,7 +32,7 @@ class TimeCircle extends Component {
   constructor(props) {
     super(props);
     const circleSize = props.circleSize ? props.circleSize : 160;
-    const totalCount = props.seconds ? props.seconds : 10;
+    const totalCount = props.seconds;
     const circumference = circleSize * 0.875 * PI;
     this.circleAnimation = {
       ...CircleAnimationDefault,
@@ -53,16 +53,16 @@ class TimeCircle extends Component {
     };
     this.startinterval();
   }
-  startinterval(space = 1000) {
+  startinterval = (space = 1000) => {
     this.interval = setInterval(this.tick.bind(this), space);
-  }
-  componentDidMount() {
+  };
+  componentDidMount = () => {
     this.setState({ ...this.state, mounted: true });
-  }
-  componentWillUnMount() {
+  };
+  componentWillUnMount = () => {
     if (this.interval) clearInterval(this.interval);
-  }
-  tick() {
+  };
+  tick = () => {
     if (!this.state.mounted) return;
     if (this.props.reset) {
       this.resetTimer();
@@ -74,9 +74,9 @@ class TimeCircle extends Component {
     } else if (this.state.remainCount === 0 && this.props.play) {
       this.props.timerDone();
     }
-  }
+  };
 
-  resetTimer() {
+  resetTimer = () => {
     const totalCount = this.props.seconds ? this.props.seconds : 10;
     this.setState({
       ...this.state,
@@ -86,8 +86,8 @@ class TimeCircle extends Component {
       sliceSize: 1 * (this.state.circumference / (totalCount - 1))
     });
     this.props.resetCallback();
-  }
-  render() {
+  };
+  render = () => {
     let circleA = { ...this.circleAnimation };
     circleA.strokeDashoffset =
       this.state.remainCount > 0
@@ -118,7 +118,7 @@ class TimeCircle extends Component {
         <Alarm play={this.state.remainCount === 0 && this.props.play} />
       </div>
     );
-  }
+  };
 }
 
 export default TimeCircle;

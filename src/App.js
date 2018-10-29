@@ -6,59 +6,76 @@ import PlayPause from "./components/PlayPause";
 import IntervalDisplay from "./components/IntervalDisplay";
 
 class App extends Component {
-  constructor(props) {
-    super(props);
-    this.intervalChange = this.intervalChange.bind(this);
-    this.resetComplete = this.resetComplete.bind(this);
-    this.intervalDone = this.intervalDone.bind(this);
-    this.ppClick = this.ppClick.bind(this);
-    this.state = {
-      intervals: 1,
-      intervalsRemaining: 1,
-      duration: 60,
-      tbreak: 0,
-      reset: false,
-      play: false,
-      intervalDone: false,
-      cycleDone: false
-    };
-  }
-  intervalDone() {
+  state = {
+    intervals: 1,
+    intervalsRemaining: 1,
+    duration: 60,
+    breakDuration: 0,
+    takingBreak: false,
+    breakReset: false,
+    reset: false,
+    play: false,
+    intervalDone: false,
+    cycleDone: false
+  };
+
+  intervalDone = () => {
     const remain = this.state.intervalsRemaining - 1;
     const done = remain <= 0;
     const newDuration = done ? 0 : this.state.duration;
+    const takingBreak = this.state.breakDuration > 0 && !done;
     this.setState({
-      ...this.state,
+      // ...this.state,
       intervalsRemaining: remain,
       duration: newDuration,
       cycleDone: done,
       reset: true,
+      breakReset: true,
       play: this.state.play && !done,
-      intervalDone: true
+      intervalDone: true,
+      takingBreak: takingBreak
     });
-  }
+    if (done) {
+      this.intervalChangeHandler({
+        intervals: this.state.intervals,
+        timespan: this.state.duration,
+        breakspan: this.state.breakDuration
+      });
+    }
+  };
 
-  intervalChange({ intervals = 1, timespan = 60, tbreak = 0 }) {
+  breakCompleteHandler = () => {
+    this.setState({ takingBreak: false, breakReset: true });
+  };
+
+  intervalChangeHandler = ({ intervals = 1, timespan = 60, breakspan = 0 }) => {
     this.setState({
-      ...this.state,
+      // ...this.state,
       intervals: intervals,
       intervalsRemaining: intervals,
       duration: timespan,
-      tbreak: tbreak,
+      breakDuration: breakspan,
       reset: true,
+      breakReset: true,
       play: false
     });
-  }
-  resetComplete() {
-    this.setState({ ...this.state, reset: false });
-  }
-  ppClick() {
+  };
+  resetComplete = () => {
+    this.setState({ reset: false });
+  };
+  breakResetComplete = () => {
+    this.setState({ breakReset: false });
+  };
+  ppClick = () => {
     this.setState({ ...this.state, play: !this.state.play });
-  }
-  render() {
+  };
+  render = () => {
+    const breakMessage = this.state.takingBreak
+      ? "Taking a Break"
+      : "In interval";
     return (
       <div className="App">
-        <Commands onchange={this.intervalChange} />
+        <Commands onchange={this.intervalChangeHandler.bind(this)} />
         <PlayPause onchange={this.ppClick} play={this.state.play} />
         <IntervalDisplay remain={this.state.intervalsRemaining} />
         <TimerDisplay
@@ -69,14 +86,22 @@ class App extends Component {
                 (this.state.intervals - this.state.intervalsRemaining + 1)
           }
           duration={this.state.duration}
-          play={this.state.play}
+          play={this.state.play && !this.state.takingBreak}
           reset={this.state.reset}
-          resetCallback={this.resetComplete}
-          timerDone={this.intervalDone}
+          resetCallback={this.resetComplete.bind(this)}
+          timerDone={this.intervalDone.bind(this)}
+        />
+        <TimerDisplay
+          toDisplay={breakMessage}
+          duration={this.state.breakDuration}
+          play={this.state.play && this.state.takingBreak}
+          reset={this.state.breakReset}
+          resetCallback={this.breakResetComplete.bind(this)}
+          timerDone={this.breakCompleteHandler.bind(this)}
         />
       </div>
     );
-  }
+  };
 }
 
 export default App;
