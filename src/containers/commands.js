@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 import IntervalInput from "../components/IntervalInput";
 import TimeSpan from "../components/TimeSpan";
 import BreakTimeInput from "../components/BreakTimeInput";
+import { Grid } from "@material-ui/core";
 
 export class Commands extends Component {
   static propTypes = {
@@ -37,18 +38,32 @@ export class Commands extends Component {
   render = () => {
     let comDisp = this.props.show ? (
       <div>
-        <IntervalInput
-          valueChange={this.setIntervalHandler.bind(this)}
-          intervals={this.state.intervals}
-        />
-        <TimeSpan
-          onselect={this.setTimeSpanHandler.bind(this)}
-          timespan={this.state.timespan}
-        />
-        <BreakTimeInput
-          onselect={this.setBreakHandler.bind(this)}
-          bTime={this.state.breakspan}
-        />
+        <Grid
+          container
+          direction="row"
+          justify="flex-start"
+          alignItems="center"
+          spacing={16}
+        >
+          <Grid item>
+            <IntervalInput
+              valueChange={this.setIntervalHandler.bind(this)}
+              intervals={this.state.intervals}
+            />
+          </Grid>
+          <Grid item>
+            <TimeSpan
+              onselect={this.setTimeSpanHandler.bind(this)}
+              timespan={this.state.timespan}
+            />
+          </Grid>
+          <Grid item>
+            <BreakTimeInput
+              onselect={this.setBreakHandler.bind(this)}
+              bTime={this.state.breakspan}
+            />
+          </Grid>
+        </Grid>
       </div>
     ) : (
       <div />

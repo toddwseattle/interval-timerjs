@@ -1,5 +1,8 @@
 import React from "react";
 import PropTypes from "prop-types";
+import Select from "@material-ui/core/Select";
+import MenuItem from "@material-ui/core/MenuItem";
+import { InputLabel, FormControl } from "@material-ui/core";
 
 function BreakTimeInput({ bTime = 10, onselect }) {
   let breakSelects = [
@@ -15,23 +18,25 @@ function BreakTimeInput({ bTime = 10, onselect }) {
   ];
   return (
     <div>
-      <label className="label">Break Between</label>
-      <select
-        value={bTime}
-        name="btime"
-        onChange={
-          onselect ||
-          (() => {
-            console.log("default");
-          })
-        }
-      >
-        {breakSelects.map(ts => (
-          <option key={ts.id} value={ts.duration}>
-            {ts.label}
-          </option>
-        ))}
-      </select>
+      <FormControl>
+        <InputLabel className="label">Break Between</InputLabel>
+        <Select
+          value={bTime}
+          name="btime"
+          onChange={
+            onselect ||
+            (() => {
+              console.log("default");
+            })
+          }
+        >
+          {breakSelects.map(ts => (
+            <MenuItem key={ts.id} value={ts.duration}>
+              {ts.label}
+            </MenuItem>
+          ))}
+        </Select>
+      </FormControl>
     </div>
   );
 }

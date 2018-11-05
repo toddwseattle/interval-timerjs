@@ -1,13 +1,33 @@
 import React from "react";
 import PropTypes from "prop-types";
+import Typography from "@material-ui/core/Typography";
 
-const IntervalDisplay = ({ remain }) => {
+const IntervalDisplay = ({ remain, total }) => {
+  const lastTimeStyle = { color: "red" };
   if (remain > 1) {
-    return <h1>{remain} Times Left</h1>;
+    return (
+      <Typography variant="h3" align="center">
+        {remain} of {total} Times Left
+      </Typography>
+    );
+  } else if (remain === 1 && total > 1) {
+    return (
+      <Typography variant="h3" align="center" style={lastTimeStyle}>
+        Last Time{" "}
+      </Typography>
+    );
   } else if (remain === 1) {
-    return <h1>Last Time</h1>;
+    return (
+      <Typography variant="h3" align="center" style={lastTimeStyle}>
+        One Interval
+      </Typography>
+    );
   } else {
-    return <h1>Intervals Complete</h1>;
+    return (
+      <Typography variant="h3" align="center">
+        Intervals Complete
+      </Typography>
+    );
   }
 };
 

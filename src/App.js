@@ -1,9 +1,24 @@
 import React, { Component } from "react";
 import "./App.css";
+import "typeface-roboto";
+import Grid from "@material-ui/core/Grid";
+import Paper from "@material-ui/core/Paper";
+import { withStyles } from "@material-ui/core/styles";
 import TimerDisplay from "./components/TimerDisplay";
 import Commands from "./containers/Commands";
 import PlayPause from "./components/PlayPause";
 import IntervalDisplay from "./components/IntervalDisplay";
+
+const styles = theme => ({
+  root: {
+    flexGrow: 1
+  },
+  paper: {
+    padding: theme.spacing.unit * 2,
+    textAlign: "center",
+    color: theme.palette.text.secondary
+  }
+});
 
 class App extends Component {
   state = {
@@ -70,38 +85,72 @@ class App extends Component {
     this.setState({ ...this.state, play: !this.state.play });
   };
   render = () => {
-    const breakMessage = this.state.takingBreak
-      ? "Taking a Break"
-      : "In interval";
+    const { classes } = this.props;
+    const breakMessage = this.state.takingBreak ? "Start Again in:" : "Break";
     return (
-      <div className="App">
-        <Commands onchange={this.intervalChangeHandler.bind(this)} />
-        <PlayPause onchange={this.ppClick} play={this.state.play} />
-        <IntervalDisplay remain={this.state.intervalsRemaining} />
-        <TimerDisplay
-          toDisplay={
-            this.state.cycleDone
-              ? "Time's Up!"
-              : "Interval #" +
-                (this.state.intervals - this.state.intervalsRemaining + 1)
-          }
-          duration={this.state.duration}
-          play={this.state.play && !this.state.takingBreak}
-          reset={this.state.reset}
-          resetCallback={this.resetComplete.bind(this)}
-          timerDone={this.intervalDone.bind(this)}
-        />
-        <TimerDisplay
-          toDisplay={breakMessage}
-          duration={this.state.breakDuration}
-          play={this.state.play && this.state.takingBreak}
-          reset={this.state.breakReset}
-          resetCallback={this.breakResetComplete.bind(this)}
-          timerDone={this.breakCompleteHandler.bind(this)}
-        />
+      <div className={classes.root}>
+        <Grid
+          container
+          direction="column"
+          justify="center"
+          alignItems="center"
+          spacing={24}
+        >
+          <Grid item>
+            <Paper>
+              <Commands onchange={this.intervalChangeHandler.bind(this)} />
+            </Paper>
+          </Grid>
+          <Paper>
+            <PlayPause onchange={this.ppClick} play={this.state.play} />
+          </Paper>
+          <Grid item>
+            <Paper>
+              <IntervalDisplay
+                remain={this.state.intervalsRemaining}
+                total={this.state.intervals}
+              />
+              <Grid
+                container
+                direction="row"
+                justify="center"
+                alignItems="center"
+                spacing={16}
+              >
+                <Grid item>
+                  <TimerDisplay
+                    toDisplay={
+                      this.state.cycleDone
+                        ? "Time's Up!"
+                        : "Interval #" +
+                          (this.state.intervals -
+                            this.state.intervalsRemaining +
+                            1)
+                    }
+                    duration={this.state.duration}
+                    play={this.state.play && !this.state.takingBreak}
+                    reset={this.state.reset}
+                    resetCallback={this.resetComplete.bind(this)}
+                    timerDone={this.intervalDone.bind(this)}
+                  />
+                </Grid>
+                <Grid item>
+                  <TimerDisplay
+                    toDisplay={breakMessage}
+                    duration={this.state.breakDuration}
+                    play={this.state.play && this.state.takingBreak}
+                    reset={this.state.breakReset}
+                    resetCallback={this.breakResetComplete.bind(this)}
+                    timerDone={this.breakCompleteHandler.bind(this)}
+                  />
+                </Grid>
+              </Grid>
+            </Paper>
+          </Grid>
+        </Grid>
       </div>
     );
   };
 }
 
-export default App;
+export default withStyles(styles)(App);

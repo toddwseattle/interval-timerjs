@@ -1,4 +1,7 @@
 import React from "react";
+import Select from "@material-ui/core/Select";
+import MenuItem from "@material-ui/core/MenuItem";
+import { InputLabel, FormControl } from "@material-ui/core";
 
 function TimeSpan({ timespan = 60, onselect }) {
   // let dTime = 60;
@@ -16,23 +19,25 @@ function TimeSpan({ timespan = 60, onselect }) {
 
   return (
     <div>
-      <label className="label">Time</label>
-      <select
-        value={timespan}
-        name="timespan"
-        onChange={
-          onselect ||
-          (() => {
-            console.log("default");
-          })
-        }
-      >
-        {timeselects.map(ts => (
-          <option key={ts.id} value={ts.duration}>
-            {ts.label}
-          </option>
-        ))}
-      </select>
+      <FormControl>
+        <InputLabel className="label">Time</InputLabel>
+        <Select
+          value={timespan}
+          name="timespan"
+          onChange={
+            onselect ||
+            (() => {
+              console.log("default");
+            })
+          }
+        >
+          {timeselects.map(ts => (
+            <MenuItem key={ts.id} value={ts.duration}>
+              {ts.label}
+            </MenuItem>
+          ))}
+        </Select>{" "}
+      </FormControl>
     </div>
   );
 }
