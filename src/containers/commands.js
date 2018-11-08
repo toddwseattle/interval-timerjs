@@ -8,12 +8,25 @@ import { Grid } from "@material-ui/core";
 export class Commands extends Component {
   static propTypes = {
     show: PropTypes.bool,
-    onchange: PropTypes.func
+    onchange: PropTypes.func,
+    intervals: PropTypes.number,
+    timespan: PropTypes.number,
+    breakspan: PropTypes.number
   };
   static defaultProps = {
-    show: true
+    show: true,
+    intervals: 2,
+    timespan: 60,
+    breakspan: 0
   };
-  state = { intervals: 2, timespan: 60, breakspan: 0 };
+  constructor(props) {
+    super(props);
+    this.state = {
+      intervals: props.intervals,
+      timespan: props.timespan,
+      breakspan: props.breakspan
+    };
+  }
   setIntervalHandler = e => {
     const ivals = parseInt(e.target.value);
     this.setState({ intervals: ivals });

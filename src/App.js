@@ -8,7 +8,7 @@ import TimerDisplay from "./components/TimerDisplay";
 import Commands from "./containers/Commands";
 import PlayPause from "./components/PlayPause";
 import IntervalDisplay from "./components/IntervalDisplay";
-
+const LOCAL_STORE_KEY = "iv-js-state-01";
 const styles = theme => ({
   root: {
     flexGrow: 1
@@ -33,7 +33,13 @@ class App extends Component {
     intervalDone: false,
     cycleDone: false
   };
-
+  constructor(props) {
+    super(props);
+    const stateFromStore = localStorage.getItem(LOCAL_STORE_KEY);
+    if (stateFromStore && stateFromStore.length > 0) {
+      this.state = JSON.parse(stateFromStore);
+    }
+  }
   intervalDone = () => {
     const remain = this.state.intervalsRemaining - 1;
     const done = remain <= 0;
@@ -74,6 +80,17 @@ class App extends Component {
       breakReset: true,
       play: false
     });
+    const saveState = {
+      ...this.state,
+      intervals,
+      intervalsRemaining: intervals,
+      duration: timespan,
+      breakDuration: breakspan,
+      reset: true,
+      breakReset: true,
+      play: false
+    };
+    localStorage.setItem(LOCAL_STORE_KEY, JSON.stringify(saveState));
   };
   resetComplete = () => {
     this.setState({ reset: false });
@@ -86,7 +103,7 @@ class App extends Component {
   };
   render = () => {
     const { classes } = this.props;
-    const breakMessage = this.state.takingBreak ? "Start Again in:" : "Break";
+    const breakMessage = this.state.takingBreak ? "Start in:" : "Break";
     return (
       <div className={classes.root}>
         <Grid
@@ -98,7 +115,12 @@ class App extends Component {
         >
           <Grid item>
             <Paper>
-              <Commands onchange={this.intervalChangeHandler.bind(this)} />
+              <Commands
+                onchange={this.intervalChangeHandler.bind(this)}
+                intervals={this.state.intervals}
+                timespan={this.state.duration}
+                breakspan={this.state.breakDuration}
+              />
             </Paper>
           </Grid>
           <Paper>

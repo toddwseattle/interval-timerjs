@@ -3,12 +3,13 @@ import PropTypes from "prop-types";
 import TimeFormat from "./TimeFormat";
 import Alarm from "./Alarm";
 // default styles
-const TimeCircleDiv = { position: "relative", float: "left" };
+const TimeCircleDiv = { position: "relative" };
 const TimeCircleText = {
   textAlign: "center",
   position: "absolute",
   lineHeight: "120px",
-  width: "100%"
+  width: "100%",
+  zIndex: 2
 };
 const Svg = { transform: "rotate(-90deg)" };
 const CircleAnimationDefault = {
@@ -26,7 +27,8 @@ class TimeCircle extends Component {
     play: PropTypes.bool,
     reset: PropTypes.bool,
     resetCallback: PropTypes.func,
-    timerDone: PropTypes.func
+    timerDone: PropTypes.func,
+    colors: PropTypes.object
   };
 
   constructor(props) {
@@ -36,7 +38,8 @@ class TimeCircle extends Component {
     const circumference = circleSize * 0.875 * PI;
     this.circleAnimation = {
       ...CircleAnimationDefault,
-      strokeDasharray: circumference
+      strokeDasharray: circumference,
+      zIndex: 1
     };
     this.circleText = {
       ...TimeCircleText,
@@ -49,10 +52,31 @@ class TimeCircle extends Component {
       sliceSize: 1 * (circumference / (totalCount - 1)),
       mounted: false,
       totalCount: totalCount,
-      remainCount: totalCount
+      remainCount: totalCount,
+      colors: this.setColors(this.props.colors ? this.props.colors : {})
     };
     this.startinterval();
   }
+  setColors = ({
+    background = "lightblue",
+    stopFill = "Red",
+    playFill = "Green",
+    stopSweep = "Black",
+    playSweep = "Blue"
+  }) => {
+    const newColors =
+      this.state && this.state.colors
+        ? {
+            ...this.state.colors,
+            background,
+            stopFill,
+            playFill,
+            stopSweep,
+            playSweep
+          }
+        : { background, stopFill, stopSweep, playSweep, playFill };
+    return newColors;
+  };
   startinterval = (space = 1000) => {
     this.interval = setInterval(this.tick.bind(this), space);
   };
@@ -93,8 +117,12 @@ class TimeCircle extends Component {
       this.state.remainCount > 0
         ? this.state.sliceSize * (this.state.remainCount - 1)
         : 0;
+    const divStyle = {
+      ...TimeCircleDiv,
+      backgroundColor: this.state.colors.background
+    };
     return (
-      <div style={TimeCircleDiv}>
+      <div style={divStyle}>
         <h2 style={this.circleText}>
           <TimeFormat seconds={this.state.remainCount} />
         </h2>
@@ -108,11 +136,19 @@ class TimeCircle extends Component {
             id="timecircle"
             style={circleA}
             strokeWidth={8}
-            fill="none"
             r={this.state.radius}
             cy={1 * (this.state.circleSize / 2) + 1}
             cx={1 * (this.state.circleSize / 2) + 1}
-            stroke="black"
+            fill={
+              this.props.play
+                ? this.state.colors.playFill
+                : this.state.colors.stopFill
+            }
+            stroke={
+              this.props.play
+                ? this.state.colors.playSweep
+                : this.state.colors.stopSweep
+            }
           />
         </svg>
         <Alarm play={this.state.remainCount === 0 && this.props.play} />

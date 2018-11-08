@@ -1,9 +1,9 @@
 import React from "react";
 import PropTypes from "prop-types";
 import Typography from "@material-ui/core/Typography";
+import CenterH3 from "./CenterH3";
 
 const IntervalDisplay = ({ remain, total }) => {
-  const lastTimeStyle = { color: "red" };
   if (remain > 1) {
     return (
       <Typography variant="h3" align="center">
@@ -11,23 +11,11 @@ const IntervalDisplay = ({ remain, total }) => {
       </Typography>
     );
   } else if (remain === 1 && total > 1) {
-    return (
-      <Typography variant="h3" align="center" style={lastTimeStyle}>
-        Last Time{" "}
-      </Typography>
-    );
+    return <CenterH3>Last Time </CenterH3>;
   } else if (remain === 1) {
-    return (
-      <Typography variant="h3" align="center" style={lastTimeStyle}>
-        One Interval
-      </Typography>
-    );
+    return <CenterH3>One Interval</CenterH3>;
   } else {
-    return (
-      <Typography variant="h3" align="center">
-        Intervals Complete
-      </Typography>
-    );
+    return <CenterH3>Intervals Complete</CenterH3>;
   }
 };
 
